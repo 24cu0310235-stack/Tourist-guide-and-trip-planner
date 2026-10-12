@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tourist Guide &amp; Trip Planner App</title>
+<style>
+/* ==========================================================
+   Tourist Guide & Trip Planner App — Stylesheet
+   Palette matched to project presentation (navy / accent blue)
+   ========================================================== */
+
+:root {
+  --navy-deep: #17204A;
+  --navy: #1E2A5A;
+  --navy-soft: #26306B;
+  --blue-accent: #2F6FED;
+  --light-bg: #EEF2FA;
+  --card-white: #FFFFFF;
+  --gray-text: #44506B;
+  --dark-text: #1C2340;
+  --orange: #E8A33D;
+  --green: #3E9B6F;
+  --red: #C0492E;
+  --line-gray: #D7DEEC;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-soft: 0 8px 24px rgba(23, 32, 74, 0.08);
+  --shadow-card: 0 2px 10px rgba(23, 32, 74, 0.06);
+  --transition: all 0.2s ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--dark-text);
+  background: var(--card-white);
+  line-height: 1.5;
+}
+
+img { max-width: 100%; display: block; }
+
+/* ================= NAVBAR ================= */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: var(--navy-deep);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.navbar__logo { font-size: 22px; }
+
+.navbar__links {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.nav-link {
+  color: #AEB8E0;S
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+.nav-link.active {
+  color: #fff;
+  background: var(--blue-accent);
+}
+
+.navbar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 8px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(255,255,255,0.15);
+}
+
+.navbar__user-name {
+  color: #C3CBEA;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.navbar__logout {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.navbar__logout:hover { background: rgba(255,255,255,0.12); }
+/* SOS Emergency Navigation Button */
+.nav-link--sos {
+  background: #C0492E;
+  color: #FFFFFF;
+  border: 1px solid #FF8B78;
+  margin-left: 6px;
+  font-weight: 800;
+}
+
+.nav-link--sos:hover {
+  background: #A83220;
+  color: #FFFFFF;
+}
+/* ================= VIEWS (simple SPA routing) ================= */
+.view { display: none; animation: fadeIn 0.25s ease; }
+.view--active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden { display: none !important; }
+
+/* ================= LOGIN ================= */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy-deep);
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.login-wrap .hero__bg-circle--1 { width: 340px; height: 340px; top: -140px; right: -60px; }
+.login-wrap .hero__bg-circle--2 { width: 220px; height: 220px; bottom: -120px; left: -60px; opacity: 0.7; }
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-soft);
+}
+
+.login-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--navy-deep);
+  margin-bottom: 6px;
+}
+
+.login-card__subtitle {
+  color: var(--gray-text);
+  font-size: 13.5px;
+  margin-bottom: 26px;
+}
+
+.login-error {
+  display: none;
+  background: #FBE7E2;
+  color: var(--red);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 18px;
+}
+
+.login-error.show { display: block; }
+
+.login-card .form-group { margin-bottom: 18px; }
+
+.login-card .btn { width: 100%; margin-top: 6px; }
+
+.login-hint {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--gray-text);
+}
+
+/* ================= HERO ================= */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--navy-deep);
+  padding: 90px 32px 110px;
+}
+
+.hero__bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--navy-soft);
+}
+
+.hero__bg-circle--1 { width: 340px; height: 340px; top: -140px; right: -60px; }
+.hero__bg-circle--2 { width: 220px; height: 220px; bottom: -120px; right: 220px; opacity: 0.7; }
+
+.hero__content {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero__eyebrow {
+  color: #7F8CC4;
+  letter-spacing: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.hero__title {
+  color: #fff;
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.hero__subtitle {
+  color: #C3CBEA;
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+/* ================= SECTION / GENERIC LAYOUT ================= */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 32px;
+}
+
+.section__title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy-deep);
+  margin-bottom: 8px;
+}
+
+.section__subtitle {
+  color: var(--gray-text);
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+/* ================= BUTTONS ================= */
+.btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 999px;
+  padding: 12px 22px;
+  transition: var(--transition);
+}
+
+.btn--lg { padding: 15px 32px; font-size: 15px; }
+
+.btn--primary {
+  background: var(--blue-accent);
+  color: #fff;
+}
+.btn--primary:hover { background: #2359c9; transform: translateY(-1px); }
+
+.btn--secondary {
+  background: var(--navy);
+  color: #fff;
+}
+.btn--secondary:hover { background: var(--navy-deep); }
+
+.btn--outline {
+  background: transparent;
+  color: var(--blue-accent);
+  border: 2px solid var(--blue-accent);
+}
+.btn--outline:hover { background: var(--blue-accent); color: #fff; }
+
+.btn--danger-outline {
+  background: transparent;
+  color: var(--red);
+  border: 2px solid var(--red);
+  padding: 8px 16px;
+  font-size: 12px;
+  border-radius: 999px;
+}
+.btn--danger-outline:hover { background: var(--red); color: #fff; }
+
+/* ================= FEATURE CARDS (home) ================= */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  background: var(--light-bg);
+  border-radius: var(--radius-md);
+  padding: 26px 22px;
+  transition: var(--transition);
+}
+
+.feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); }
+
+.feature-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--blue-accent);
+  color: #fff;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.feature-card h3 {
+  font-size: 16px;
+  color: var(--navy-deep);
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 13.5px;
+  color: var(--gray-text);
+}
+
+/* ================= PLANNER FORM ================= */
+.planner-card {
+  background: var(--light-bg);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.form-group--full { grid-column: 1 / -1; }
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-deep);
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line-gray);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 14px;
+  background: #fff;
+  color: var(--dark-text);
+  transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--blue-accent);
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.15);
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  border: 1.5px solid var(--line-gray);
+  background: #fff;
+  color: var(--gray-text);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.chip:hover { border-color: var(--blue-accent); }
+
+.chip.selected {
+  background: var(--blue-accent);
+  border-color: var(--blue-accent);
+  color: #fff;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.form-hint {
+  font-size: 12.5px;
+  color: var(--gray-text);
+}
+
+/* ================= EMPTY STATE ================= */
+.empty-state {
+  text-align: center;
+  padding: 70px 20px;
+  background: var(--light-bg);
+  border-radius: var(--radius-lg);
+}
+
+.empty-state__icon { font-size: 44px; margin-bottom: 14px; }
+
+.empty-state h3 { color: var(--navy-deep); font-size: 18px; margin-bottom: 8px; }
+
+.empty-state p { color: var(--gray-text); font-size: 14px; margin-bottom: 20px; }
+
+/* ================= RESULTS HEADER ================= */
+.results-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* ================= WEATHER STRIP ================= */
+.weather-strip {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 28px;
+}
+
+.weather-chip {
+  flex: 0 0 auto;
+  min-width: 130px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.weather-chip__day { font-size: 12px; color: #AEB8E0; font-weight: 700; margin-bottom: 6px; }
+.weather-chip__icon { font-size: 24px; margin-bottom: 4px; }
+.weather-chip__temp { font-size: 15px; font-weight: 700; }
+.weather-chip__desc { font-size: 11.5px; color: #C3CBEA; }
+.weather-chip__alert {
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+/* ================= BUDGET SUMMARY ================= */
+.budget-summary {
+  background: var(--light-bg);
+  border-radius: var(--radius-lg);
+  padding: 26px 28px;
+  margin-bottom: 32px;
+}
+
+.budget-summary__title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy-deep);
+  margin-bottom: 18px;
+}
+
+.budget-rows { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+
+.budget-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.budget-row__label {
+  width: 140px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark-text);
+  flex: 0 0 auto;
+}
+
+.budget-row__track {
+  flex: 1;
+  height: 10px;
+  background: #E1E7F5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.budget-row__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--blue-accent);
+}
+
+.budget-row__value {
+  width: 90px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-deep);
+  flex: 0 0 auto;
+}
+
+.budget-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1.5px solid var(--line-gray);
+}
+
+.budget-total__label { font-size: 14px; font-weight: 700; color: var(--dark-text); }
+
+.budget-total__value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy-deep);
+}
+
+.budget-total__status {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status--ok { background: #E4F4EC; color: var(--green); }
+.status--over { background: #FBE7E2; color: var(--red); }
+
+/* ================= ITINERARY DAYS ================= */
+.day-card {
+  margin-bottom: 24px;
+  border: 1.5px solid var(--line-gray);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.day-card__header {
+  background: var(--navy);
+  color: #fff;
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.day-card__title { font-size: 15px; font-weight: 800; }
+.day-card__cost { font-size: 12.5px; color: #C3CBEA; }
+
+.day-card__body { padding: 20px 22px; }
+
+.stop {
+  display: flex;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--light-bg);
+}
+
+.stop:last-child { border-bottom: none; }
+
+.stop__time {
+  flex: 0 0 74px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--blue-accent);
+}
+
+.stop__icon {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--light-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.stop__body { flex: 1; }
+
+.stop__name { font-size: 14.5px; font-weight: 700; color: var(--dark-text); }
+
+.stop__meta {
+  font-size: 12px;
+  color: var(--gray-text);
+  margin-top: 2px;
+}
+
+.stop__tag {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--blue-accent);
+  background: #E7EEFD;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.stop__cost {
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-deep);
+}
+
+/* ================= SAVED TRIPS ================= */
+.saved-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.saved-card {
+  background: var(--light-bg);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.saved-card__dest { font-size: 16px; font-weight: 800; color: var(--navy-deep); }
+.saved-card__meta { font-size: 12.5px; color: var(--gray-text); margin: 6px 0 14px; }
+
+.saved-card__actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+  text-align: center;
+  padding: 28px;
+  color: #9AA4C0;
+  font-size: 12px;
+  background: var(--navy-deep);
+}
+
+/* ================= TOAST ================= */
+.toast {
+  position: fixed;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--navy-deep);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 720px) {
+  .navbar { flex-direction: column; gap: 10px; padding: 14px 18px; }
+  .navbar__links { flex-wrap: wrap; justify-content: center; }
+  .navbar__user { margin-left: 0; padding-left: 0; border-left: none; }
+  .hero { padding: 60px 20px 80px; }
+  .hero__title { font-size: 30px; }
+  .section { padding: 40px 18px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .planner-card { padding: 22px; }
+  .stop { flex-wrap: wrap; }
+  .stop__cost { margin-left: 50px; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div id="loginScreen" class="login-wrap">
+    <div class="hero__bg-circle hero__bg-circle--1"></div>
+    <div class="hero__bg-circle hero__bg-circle--2"></div>
+    <div class="login-card">
+      <div class="login-card__brand"><span>🧭</span><span>TripGuide</span></div>
+      <p class="login-card__subtitle">Sign in to plan your next trip.</p>
+
+      <div id="loginError" class="login-error">Invalid username or password.</div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn--primary btn--lg">Log In</button>
+      </form>
+
+      <p class="login-hint">Demo build — client-side check only, not secure for real credentials.</p>
+    </div>
+  </div>
+
+  <!-- ============ APP (hidden until logged in) ============ -->
+  <div id="appRoot" class="hidden">
+
+  <!-- ============ NAVBAR ============ -->
+  <header class="navbar">
+    <div class="navbar__brand">
+      <span class="navbar__logo">🧭</span>
+      <span class="navbar__title">TripGuide</span>
+    </div>
+    <nav class="navbar__links">
+      <a href="#home" class="nav-link active" data-target="home">Home</a>
+      <a href="#planner" class="nav-link" data-target="planner">Plan a Trip</a>
+      <a href="#results" class="nav-link" data-target="results">Itinerary</a>
+      <a href="#saved" class="nav-link" data-target="saved">Saved Trips</a>
+      <button type="button" class="nav-link nav-link--sos" id="sosBtn">
+  🚨 SOS Emergency
+</button>
+      
+      <div class="navbar__user">
+        <span class="navbar__user-name" id="navUserName"></span>
+        <button class="navbar__logout" id="logoutBtn">Log Out</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ============ HOME / HERO ============ -->
+  <section id="home" class="view view--active">
+    <div class="hero">
+      <div class="hero__bg-circle hero__bg-circle--1"></div>
+      <div class="hero__bg-circle hero__bg-circle--2"></div>
+      <div class="hero__content">
+        <p class="hero__eyebrow">MOBILE / WEB APPLICATION</p>
+        <h1 class="hero__title">Plan every trip in one place.</h1>
+        <p class="hero__subtitle">
+          Personalized itineraries, budget estimates, weather alerts, and route
+          guidance — combined into a single smart travel planner.
+        </p>
+        <button class="btn btn--primary btn--lg" id="heroCta">Start Planning</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section__title">Why TripGuide</h2>
+      <p class="section__subtitle">A single, personalized platform spanning discovery, planning, and travel-day support</p>
+      <div class="card-grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">1</div>
+          <h3>Unified Platform</h3>
+          <p>Attractions, hotels, restaurants, transport, and weather in one app.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">2</div>
+          <h3>Personalized Itinerary Engine</h3>
+          <p>Auto-generates a day-wise plan from destination, dates, budget, and interests.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">3</div>
+          <h3>Budget &amp; Cost Estimator</h3>
+          <p>Computes an end-to-end estimated cost across stay, food, and travel.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">4</div>
+          <h3>Weather &amp; Alerts</h3>
+          <p>Live-style forecasts and travel alerts surfaced within the plan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PLANNER FORM ============ -->
+  <section id="planner" class="view">
+    <div class="section">
+      <h2 class="section__title">Plan Your Trip</h2>
+      <p class="section__subtitle">Tell us your destination, dates, budget, and interests — we'll build the itinerary.</p>
+
+      <form id="plannerForm" class="planner-card">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="destination">Destination</label>
+            <select id="destination" required>
+              <option value="">Select a destination</option>
+              <option value="Goa">Goa, India</option>
+              <option value="Manali">Manali, India</option>
+              <option value="Jaipur">Jaipur, India</option>
+              <option value="Kerala">Kerala (Munnar &amp; Alleppey), India</option>
+              <option value="Paris">Paris, France</option>
+              <option value="Tokyo">Tokyo, Japan</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="days">Trip Duration (days)</label>
+            <input type="number" id="days" min="1" max="10" value="3" required />
+          </div>
+
+          <div class="form-group">
+            <label for="budget">Budget Cap (₹)</label>
+            <input type="number" id="budget" min="2000" step="500" value="20000" required />
+          </div>
+
+          <div class="form-group">
+            <label for="travelers">Number of Travelers</label>
+            <input type="number" id="travelers" min="1" max="12" value="2" required />
+          </div>
+
+          <div class="form-group form-group--full">
+            <label>Interests</label>
+            <div class="chip-group" id="interestChips">
+              <button type="button" class="chip" data-value="nature">🌿 Nature</button>
+              <button type="button" class="chip" data-value="adventure">🧗 Adventure</button>
+              <button type="button" class="chip" data-value="culture">🏛️ Culture &amp; Heritage</button>
+              <button type="button" class="chip" data-value="food">🍜 Food</button>
+              <button type="button" class="chip" data-value="beach">🏖️ Beach</button>
+              <button type="button" class="chip" data-value="nightlife">🌃 Nightlife</button>
+              <button type="button" class="chip" data-value="shopping">🛍️ Shopping</button>
+              <button type="button" class="chip" data-value="relaxation">🧘 Relaxation</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <span class="form-hint" id="formHint">Select at least one interest to continue</span>
+          <button type="submit" class="btn btn--primary btn--lg" id="generateBtn">Generate Itinerary</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS / ITINERARY ============ -->
+  <section id="results" class="view">
+    <div class="section">
+      <div id="resultsEmpty" class="empty-state">
+        <div class="empty-state__icon">🗺️</div>
+        <h3>No itinerary yet</h3>
+        <p>Head to “Plan a Trip” and fill in your details to generate a personalized itinerary.</p>
+        <button class="btn btn--secondary" data-goto="planner">Plan a Trip</button>
+      </div>
+
+      <div id="resultsContent" class="hidden">
+        <div class="results-header">
+          <div>
+            <h2 class="section__title" id="resultsTitle">Your Trip</h2>
+            <p class="section__subtitle" id="resultsSubtitle"></p>
+          </div>
+          <button class="btn btn--outline" id="saveTripBtn">💾 Save Trip</button>
+        </div>
+
+        <!-- Weather strip -->
+        <div class="weather-strip" id="weatherStrip"></div>
+
+        <!-- Budget summary -->
+        <div class="budget-summary" id="budgetSummary"></div>
+
+        <!-- Day-wise itinerary -->
+        <div id="itineraryDays"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SAVED TRIPS ============ -->
+  <section id="saved" class="view">
+    <div class="section">
+      <h2 class="section__title">Saved Trips</h2>
+      <p class="section__subtitle">Your saved itineraries, stored on this device</p>
+      <div id="savedEmpty" class="empty-state">
+        <div class="empty-state__icon">📌</div>
+        <h3>No saved trips yet</h3>
+        <p>Generate an itinerary and tap “Save Trip” to see it here.</p>
+      </div>
+      <div id="savedList" class="saved-grid"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Tourist Guide &amp; Trip Planner App — Demo Build (Review 2)</p>
+  </footer>
+
+  </div><!-- /#appRoot -->
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+/* ==========================================================
+   auth.js — Client-side login gate (DEMO ONLY)
+   -----------------------------------------------------------
+   There is no real backend in this single-file demo, so this
+   is NOT secure authentication — the credential is visible to
+   anyone who views page source. It only exists to satisfy the
+   "add a login screen" requirement for a prototype/review.
+   ========================================================== */
+
+const DEMO_CREDENTIALS = {
+  username: "Anna@00",
+  password: "12345",
+};
+
+let isLoggedIn = false;
+
+const loginScreen = document.getElementById("loginScreen");
+const appRoot = document.getElementById("appRoot");
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+const navUserName = document.getElementById("navUserName");
+const logoutBtn = document.getElementById("logoutBtn");
+
+function showApp() {
+  isLoggedIn = true;
+  loginScreen.classList.add("hidden");
+  appRoot.classList.remove("hidden");
+  navUserName.textContent = DEMO_CREDENTIALS.username;
+}
+
+function showLogin() {
+  isLoggedIn = false;
+  appRoot.classList.add("hidden");
+  loginScreen.classList.remove("hidden");
+  loginForm.reset();
+  loginError.classList.remove("show");
+}
+
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const u = document.getElementById("loginUsername").value.trim();
+  const p = document.getElementById("loginPassword").value;
+
+  if (u === DEMO_CREDENTIALS.username && p === DEMO_CREDENTIALS.password) {
+    showApp();
+  } else {
+    loginError.classList.add("show");
+  }
+});
+
+logoutBtn.addEventListener("click", showLogin);
+
+// Session-only: login state is not persisted, so refreshing
+// the page requires logging in again.
+showLogin();
+
+  </script>
+  <script>
+/* ==========================================================
+   data.js — Sample destination datasets
+   Stands in for the "Fetch candidate attractions, hotels,
+   restaurants & transport from DB / external APIs" step
+   of the trip-planning algorithm.
+   ========================================================== */
+
+const DESTINATIONS = {
+
+  Goa: {
+    country: "India",
+    avgHotelPerNight: 2200,
+    avgFoodPerDay: 900,
+    avgLocalTransportPerDay: 500,
+    weather: [
+      { icon: "☀️", temp: "31°C", desc: "Sunny" },
+      { icon: "⛅", temp: "29°C", desc: "Partly cloudy" },
+      { icon: "🌦️", temp: "27°C", desc: "Light showers", alert: "Rain expected in the evening" },
+      { icon: "☀️", temp: "30°C", desc: "Sunny" },
+      { icon: "☀️", temp: "31°C", desc: "Sunny" },
+    ],
+    attractions: [
+      { name: "Baga Beach", tags: ["beach", "nightlife"], cost: 0, duration: "2h", icon: "🏖️" },
+      { name: "Fort Aguada", tags: ["culture"], cost: 100, duration: "1.5h", icon: "🏰" },
+      { name: "Dudhsagar Falls Trek", tags: ["adventure", "nature"], cost: 800, duration: "4h", icon: "🥾" },
+      { name: "Anjuna Flea Market", tags: ["shopping"], cost: 0, duration: "2h", icon: "🛍️" },
+      { name: "Basilica of Bom Jesus", tags: ["culture"], cost: 0, duration: "1h", icon: "⛪" },
+      { name: "Spice Plantation Tour", tags: ["nature", "food"], cost: 600, duration: "3h", icon: "🌿" },
+      { name: "Club Cubana Night Party", tags: ["nightlife"], cost: 1200, duration: "3h", icon: "🌃" },
+      { name: "Palolem Beach Relaxation", tags: ["relaxation", "beach"], cost: 0, duration: "3h", icon: "🧘" },
+    ],
+    food: [
+      { name: "Fisherman's Wharf", tags: ["food"], cost: 700, icon: "🍤" },
+      { name: "Vinayak Family Restaurant", tags: ["food"], cost: 350, icon: "🍛" },
+      { name: "Gunpowder Assagao", tags: ["food"], cost: 600, icon: "🍽️" },
+    ],
+  },
+
+  Manali: {
+    country: "India",
+    avgHotelPerNight: 1800,
+    avgFoodPerDay: 700,
+    avgLocalTransportPerDay: 600,
+    weather: [
+      { icon: "🌨️", temp: "4°C", desc: "Snow flurries", alert: "Cold wave advisory" },
+      { icon: "⛅", temp: "8°C", desc: "Partly cloudy" },
+      { icon: "☀️", temp: "10°C", desc: "Clear skies" },
+      { icon: "🌥️", temp: "7°C", desc: "Overcast" },
+      { icon: "☀️", temp: "9°C", desc: "Clear skies" },
+    ],
+    attractions: [
+      { name: "Solang Valley", tags: ["adventure", "nature"], cost: 1500, duration: "4h", icon: "🏔️" },
+      { name: "Hadimba Temple", tags: ["culture"], cost: 0, duration: "1h", icon: "🛕" },
+      { name: "Rohtang Pass", tags: ["nature", "adventure"], cost: 2000, duration: "5h", icon: "🏂" },
+      { name: "Old Manali Cafes", tags: ["food", "relaxation"], cost: 400, duration: "2h", icon: "☕" },
+      { name: "Mall Road Shopping", tags: ["shopping"], cost: 0, duration: "2h", icon: "🛍️" },
+      { name: "River Rafting - Beas", tags: ["adventure"], cost: 1000, duration: "2h", icon: "🚣" },
+      { name: "Vashisht Hot Springs", tags: ["relaxation"], cost: 100, duration: "1.5h", icon: "♨️" },
+    ],
+    food: [
+      { name: "Johnson's Cafe", tags: ["food"], cost: 500, icon: "🍝" },
+      { name: "Chopsticks Restaurant", tags: ["food"], cost: 450, icon: "🥢" },
+      { name: "Cafe 1947", tags: ["food"], cost: 550, icon: "🍽️" },
+    ],
+  },
+
+  Jaipur: {
+    country: "India",
+    avgHotelPerNight: 2000,
+    avgFoodPerDay: 650,
+    avgLocalTransportPerDay: 400,
+    weather: [
+      { icon: "☀️", temp: "34°C", desc: "Sunny" },
+      { icon: "☀️", temp: "35°C", desc: "Hot & clear", alert: "Heat advisory — carry water" },
+      { icon: "⛅", temp: "32°C", desc: "Partly cloudy" },
+      { icon: "☀️", temp: "33°C", desc: "Sunny" },
+      { icon: "⛅", temp: "31°C", desc: "Partly cloudy" },
+    ],
+    attractions: [
+      { name: "Amber Fort", tags: ["culture", "adventure"], cost: 500, duration: "3h", icon: "🏰" },
+      { name: "City Palace", tags: ["culture"], cost: 300, duration: "2h", icon: "🏛️" },
+      { name: "Hawa Mahal", tags: ["culture"], cost: 200, duration: "1h", icon: "🕌" },
+      { name: "Johari Bazaar Shopping", tags: ["shopping"], cost: 0, duration: "2h", icon: "🛍️" },
+      { name: "Chokhi Dhani Cultural Village", tags: ["culture", "food"], cost: 900, duration: "3h", icon: "🎭" },
+      { name: "Nahargarh Fort Sunset", tags: ["nature", "relaxation"], cost: 200, duration: "2h", icon: "🌇" },
+    ],
+    food: [
+      { name: "Laxmi Misthan Bhandar", tags: ["food"], cost: 300, icon: "🍛" },
+      { name: "Suvarna Mahal", tags: ["food"], cost: 1200, icon: "🍽️" },
+      { name: "Rawat Kachori", tags: ["food"], cost: 150, icon: "🥟" },
+    ],
+  },
+
+  Kerala: {
+    country: "India",
+    avgHotelPerNight: 2600,
+    avgFoodPerDay: 800,
+    avgLocalTransportPerDay: 700,
+    weather: [
+      { icon: "🌦️", temp: "27°C", desc: "Light showers", alert: "Monsoon showers expected" },
+      { icon: "⛅", temp: "28°C", desc: "Partly cloudy" },
+      { icon: "☀️", temp: "29°C", desc: "Sunny" },
+      { icon: "🌦️", temp: "26°C", desc: "Light showers" },
+      { icon: "⛅", temp: "28°C", desc: "Partly cloudy" },
+    ],
+    attractions: [
+      { name: "Alleppey Houseboat Cruise", tags: ["relaxation", "nature"], cost: 3500, duration: "5h", icon: "🛶" },
+      { name: "Munnar Tea Gardens", tags: ["nature"], cost: 300, duration: "2h", icon: "🍃" },
+      { name: "Eravikulam National Park", tags: ["nature", "adventure"], cost: 400, duration: "3h", icon: "🦌" },
+      { name: "Fort Kochi Walk", tags: ["culture"], cost: 0, duration: "2h", icon: "🚶" },
+      { name: "Kathakali Dance Show", tags: ["culture"], cost: 500, duration: "1.5h", icon: "🎭" },
+      { name: "Spice Market Shopping", tags: ["shopping", "food"], cost: 0, duration: "1.5h", icon: "🌶️" },
+    ],
+    food: [
+      { name: "Kayees Rahmathulla Cafe", tags: ["food"], cost: 350, icon: "🍚" },
+      { name: "Dal Roti Restaurant", tags: ["food"], cost: 450, icon: "🍽️" },
+      { name: "Fort House Restaurant", tags: ["food"], cost: 700, icon: "🦞" },
+    ],
+  },
+
+  Paris: {
+    country: "France",
+    avgHotelPerNight: 9500,
+    avgFoodPerDay: 3200,
+    avgLocalTransportPerDay: 1200,
+    weather: [
+      { icon: "⛅", temp: "16°C", desc: "Partly cloudy" },
+      { icon: "🌧️", temp: "14°C", desc: "Rain", alert: "Rain expected — carry an umbrella" },
+      { icon: "☀️", temp: "18°C", desc: "Clear skies" },
+      { icon: "⛅", temp: "17°C", desc: "Partly cloudy" },
+      { icon: "☀️", temp: "19°C", desc: "Sunny" },
+    ],
+    attractions: [
+      { name: "Eiffel Tower", tags: ["culture"], cost: 2200, duration: "2.5h", icon: "🗼" },
+      { name: "Louvre Museum", tags: ["culture"], cost: 1800, duration: "3h", icon: "🖼️" },
+      { name: "Montmartre & Sacré-Cœur", tags: ["culture", "relaxation"], cost: 0, duration: "2h", icon: "⛪" },
+      { name: "Seine River Cruise", tags: ["relaxation", "nature"], cost: 1500, duration: "1.5h", icon: "🚤" },
+      { name: "Champs-Élysées Shopping", tags: ["shopping"], cost: 0, duration: "2h", icon: "🛍️" },
+      { name: "Le Marais Nightlife", tags: ["nightlife"], cost: 2500, duration: "3h", icon: "🌃" },
+    ],
+    food: [
+      { name: "Le Petit Bistro", tags: ["food"], cost: 2000, icon: "🥐" },
+      { name: "Café de Flore", tags: ["food"], cost: 1600, icon: "☕" },
+      { name: "L'As du Fallafel", tags: ["food"], cost: 900, icon: "🥙" },
+    ],
+  },
+
+  Tokyo: {
+    country: "Japan",
+    avgHotelPerNight: 8500,
+    avgFoodPerDay: 2800,
+    avgLocalTransportPerDay: 1000,
+    weather: [
+      { icon: "☀️", temp: "22°C", desc: "Clear skies" },
+      { icon: "⛅", temp: "20°C", desc: "Partly cloudy" },
+      { icon: "🌦️", temp: "19°C", desc: "Light rain", alert: "Light rain in the afternoon" },
+      { icon: "☀️", temp: "23°C", desc: "Sunny" },
+      { icon: "⛅", temp: "21°C", desc: "Partly cloudy" },
+    ],
+    attractions: [
+      { name: "Senso-ji Temple", tags: ["culture"], cost: 0, duration: "1.5h", icon: "⛩️" },
+      { name: "Shibuya Crossing & District", tags: ["shopping", "nightlife"], cost: 0, duration: "2h", icon: "🚦" },
+      { name: "teamLab Planets", tags: ["culture", "adventure"], cost: 3200, duration: "2h", icon: "🎨" },
+      { name: "Tsukiji Outer Market", tags: ["food", "shopping"], cost: 1500, duration: "2h", icon: "🍣" },
+      { name: "Ueno Park", tags: ["nature", "relaxation"], cost: 0, duration: "1.5h", icon: "🌸" },
+      { name: "Golden Gai Nightlife", tags: ["nightlife"], cost: 2000, duration: "2.5h", icon: "🌃" },
+    ],
+    food: [
+      { name: "Ichiran Ramen", tags: ["food"], cost: 1200, icon: "🍜" },
+      { name: "Sushi Dai", tags: ["food"], cost: 2500, icon: "🍣" },
+      { name: "Omoide Yokocho Grill", tags: ["food"], cost: 1800, icon: "🍢" },
+    ],
+  },
+};
+
+
+/* ==========================================================
+   app.js — Tourist Guide & Trip Planner App
+   Implements the rule-based algorithm from the project design:
+   1. Collect destination, dates(days), budget cap, interest tags
+   2. Fetch candidate attractions/food from the dataset
+   3. Filter candidates against the budget cap (budget-first filtering)
+   4. Score & rank filtered candidates by interest-match
+   5. Assemble a day-wise itinerary
+   6. Compute total estimated cost (stay + food + transport + activities)
+   7. Attach weather forecast per day
+   8. Display itinerary + budget breakdown
+   9. Allow saving the plan (localStorage)
+   ========================================================== */
+
+/* ---------------- Simple SPA view routing ---------------- */
+const views = document.querySelectorAll(".view");
+const navLinks = document.querySelectorAll(".nav-link");
+
+function goToView(name) {
+  views.forEach(v => v.classList.toggle("view--active", v.id === name));
+  navLinks.forEach(l => l.classList.toggle("active", l.dataset.target === name));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+navLinks.forEach(link => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    goToView(link.dataset.target);
+  });
+});
+
+document.querySelectorAll("[data-goto]").forEach(btn => {
+  btn.addEventListener("click", () => goToView(btn.dataset.goto));
+});
+
+document.getElementById("heroCta").addEventListener("click", () => goToView("planner"));
+
+/* ---------------- Interest chip selection ---------------- */
+const selectedInterests = new Set();
+const chipEls = document.querySelectorAll(".chip");
+const formHint = document.getElementById("formHint");
+
+chipEls.forEach(chip => {
+  chip.addEventListener("click", () => {
+    const val = chip.dataset.value;
+    if (selectedInterests.has(val)) {
+      selectedInterests.delete(val);
+      chip.classList.remove("selected");
+    } else {
+      selectedInterests.add(val);
+      chip.classList.add("selected");
+    }
+    formHint.textContent = selectedInterests.size
+      ? `${selectedInterests.size} interest${selectedInterests.size > 1 ? "s" : ""} selected`
+      : "Select at least one interest to continue";
+  });
+});
+
+/* ---------------- Toast helper ---------------- */
+let toastTimer = null;
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+/* ---------------- Core algorithm ---------------- */
+
+/**
+ * Step: Filter candidates against the budget cap before ranking.
+ * Roughly reserves budget for hotel + food + local transport across
+ * all days, then keeps only activities whose cost fits what remains
+ * per day for activities.
+ */
+function computeBudgetFrame(destData, days, budgetCap, travelers) {
+  const hotelTotal = destData.avgHotelPerNight * days;
+  const foodTotal = destData.avgFoodPerDay * days * travelers;
+  const transportTotal = destData.avgLocalTransportPerDay * days;
+  const fixedTotal = hotelTotal + foodTotal + transportTotal;
+  const remainingForActivities = Math.max(budgetCap - fixedTotal, 0);
+  const perDayActivityBudget = remainingForActivities / days;
+  return { hotelTotal, foodTotal, transportTotal, fixedTotal, remainingForActivities, perDayActivityBudget };
+}
+
+/**
+ * Step: Score & rank filtered candidates by interest-match.
+ * Score = number of overlapping tags with selected interests.
+ */
+function scoreByInterest(item, interests) {
+  if (!item.tags) return 0;
+  return item.tags.reduce((score, tag) => score + (interests.has(tag) ? 1 : 0), 0);
+}
+
+/**
+ * Step: Assemble day-wise itinerary respecting a per-day activity budget.
+ * Greedy selection: highest interest-match first, skip if it blows the
+ * remaining per-day activity budget, until each day has 2-3 stops.
+ */
+function buildItinerary(destData, days, interests, perDayActivityBudget) {
+  const pool = [...destData.attractions]
+    .map(item => ({ ...item, score: scoreByInterest(item, interests) }))
+    .sort((a, b) => b.score - a.score || a.cost - b.cost);
+
+  const used = new Set();
+  const itinerary = [];
+
+  for (let d = 0; d < days; d++) {
+    let dayBudget = perDayActivityBudget;
+    const stops = [];
+    const times = ["9:00 AM", "12:30 PM", "3:30 PM", "6:30 PM"];
+
+    for (const item of pool) {
+      if (stops.length >= 3) break;
+      if (used.has(item.name)) continue;
+      if (item.cost <= dayBudget || item.cost === 0) {
+        stops.push(item);
+        used.add(item.name);
+        dayBudget -= item.cost;
+      }
+    }
+
+    // fallback: if nothing selected (e.g. tight budget), add cheapest unused item
+    if (stops.length === 0) {
+      const cheapest = pool.find(i => !used.has(i.name));
+      if (cheapest) { stops.push(cheapest); used.add(cheapest.name); }
+    }
+
+    // attach a food stop for the day
+    const foodItem = destData.food[d % destData.food.length];
+
+    const dayStops = stops.map((s, idx) => ({
+      time: times[idx] || "Evening",
+      name: s.name,
+      icon: s.icon,
+      duration: s.duration,
+      cost: s.cost,
+      tag: s.tags[0],
+    }));
+
+    dayStops.splice(2, 0, {
+      time: "1:30 PM",
+      name: foodItem.name,
+      icon: foodItem.icon,
+      duration: "1h (meal)",
+      cost: foodItem.cost,
+      tag: "food",
+    });
+
+    const dayTotal = dayStops.reduce((sum, s) => sum + s.cost, 0);
+
+    itinerary.push({
+      dayNumber: d + 1,
+      stops: dayStops,
+      dayTotal,
+    });
+  }
+
+  return itinerary;
+}
+
+/**
+ * Step: Compute total estimated cost across stay + food + transport + activities.
+ */
+function computeTotalCost(budgetFrame, itinerary) {
+  const activitiesTotal = itinerary.reduce((sum, day) => sum + day.dayTotal, 0);
+  const grandTotal = budgetFrame.hotelTotal + budgetFrame.foodTotal + budgetFrame.transportTotal + activitiesTotal;
+  return { activitiesTotal, grandTotal };
+}
+
+/* ---------------- Rendering ---------------- */
+
+function renderWeather(destData, days) {
+  const strip = document.getElementById("weatherStrip");
+  strip.innerHTML = "";
+  for (let i = 0; i < days; i++) {
+    const w = destData.weather[i % destData.weather.length];
+    const el = document.createElement("div");
+    el.className = "weather-chip";
+    el.innerHTML = `
+      <div class="weather-chip__day">Day ${i + 1}</div>
+      <div class="weather-chip__icon">${w.icon}</div>
+      <div class="weather-chip__temp">${w.temp}</div>
+      <div class="weather-chip__desc">${w.desc}</div>
+      ${w.alert ? `<div class="weather-chip__alert">⚠ ${w.alert}</div>` : ""}
+    `;
+    strip.appendChild(el);
+  }
+}
+
+function renderBudget(budgetFrame, totals, budgetCap) {
+  const el = document.getElementById("budgetSummary");
+  const rows = [
+    { label: "Accommodation", value: budgetFrame.hotelTotal },
+    { label: "Food & Dining", value: budgetFrame.foodTotal },
+    { label: "Local Transport", value: budgetFrame.transportTotal },
+    { label: "Activities", value: totals.activitiesTotal },
+  ];
+  const maxVal = Math.max(...rows.map(r => r.value), 1);
+  const isOver = totals.grandTotal > budgetCap;
+
+  el.innerHTML = `
+    <div class="budget-summary__title">Estimated Cost Breakdown</div>
+    <div class="budget-rows">
+      ${rows.map(r => `
+        <div class="budget-row">
+          <div class="budget-row__label">${r.label}</div>
+          <div class="budget-row__track">
+            <div class="budget-row__fill" style="width:${Math.min((r.value / maxVal) * 100, 100)}%"></div>
+          </div>
+          <div class="budget-row__value">₹${r.value.toLocaleString("en-IN")}</div>
+        </div>
+      `).join("")}
+    </div>
+    <div class="budget-total">
+      <div class="budget-total__label">Total Estimated Cost</div>
+      <div>
+        <span class="budget-total__value">₹${totals.grandTotal.toLocaleString("en-IN")}</span>
+        <span class="budget-total__status ${isOver ? "status--over" : "status--ok"}">
+          ${isOver ? "Over budget" : "Within budget"}
+        </span>
+      </div>
+    </div>
+  `;
+}
+
+function renderItinerary(itinerary) {
+  const container = document.getElementById("itineraryDays");
+  container.innerHTML = "";
+  itinerary.forEach(day => {
+    const dayEl = document.createElement("div");
+    dayEl.className = "day-card";
+    dayEl.innerHTML = `
+      <div class="day-card__header">
+        <div class="day-card__title">Day ${day.dayNumber}</div>
+        <div class="day-card__cost">Est. ₹${day.dayTotal.toLocaleString("en-IN")}</div>
+      </div>
+      <div class="day-card__body">
+        ${day.stops.map(s => `
+          <div class="stop">
+            <div class="stop__time">${s.time}</div>
+            <div class="stop__icon">${s.icon}</div>
+            <div class="stop__body">
+              <div class="stop__name">${s.name}</div>
+              <div class="stop__meta">${s.duration}</div>
+              <span class="stop__tag">${s.tag}</span>
+            </div>
+            <div class="stop__cost">${s.cost > 0 ? "₹" + s.cost.toLocaleString("en-IN") : "Free"}</div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+    container.appendChild(dayEl);
+  });
+}
+
+/* ---------------- Form submit → run full pipeline ---------------- */
+
+let currentTrip = null;
+
+document.getElementById("plannerForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  if (selectedInterests.size === 0) {
+    formHint.textContent = "Please select at least one interest";
+    formHint.style.color = "var(--red)";
+    return;
+  }
+
+  const destinationKey = document.getElementById("destination").value;
+  const days = parseInt(document.getElementById("days").value, 10);
+  const budgetCap = parseFloat(document.getElementById("budget").value);
+  const travelers = parseInt(document.getElementById("travelers").value, 10);
+
+  if (!destinationKey) {
+    showToast("Please choose a destination");
+    return;
+  }
+
+  const destData = DESTINATIONS[destinationKey];
+
+  // Run the algorithm pipeline
+  const budgetFrame = computeBudgetFrame(destData, days, budgetCap, travelers);
+  const itinerary = buildItinerary(destData, days, selectedInterests, budgetFrame.perDayActivityBudget);
+  const totals = computeTotalCost(budgetFrame, itinerary);
+
+  currentTrip = {
+    id: Date.now(),
+    destinationKey,
+    country: destData.country,
+    days,
+    budgetCap,
+    travelers,
+    interests: [...selectedInterests],
+    itinerary,
+    totals,
+    budgetFrame,
+  };
+
+  // Render results view
+  document.getElementById("resultsEmpty").classList.add("hidden");
+  document.getElementById("resultsContent").classList.remove("hidden");
+  document.getElementById("resultsTitle").textContent = `${destinationKey}, ${destData.country}`;
+  document.getElementById("resultsSubtitle").textContent =
+    `${days}-day trip · ${travelers} traveler${travelers > 1 ? "s" : ""} · Budget ₹${budgetCap.toLocaleString("en-IN")}`;
+
+  renderWeather(destData, days);
+  renderBudget(budgetFrame, totals, budgetCap);
+  renderItinerary(itinerary);
+
+  goToView("results");
+  showToast("Itinerary generated ✓");
+});
+
+/* ---------------- Save trip (localStorage) ---------------- */
+
+const SAVED_KEY = "tripguide_saved_trips";
+
+function getSavedTrips() {
+  try {
+    return JSON.parse(localStorage.getItem(SAVED_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function setSavedTrips(trips) {
+  localStorage.setItem(SAVED_KEY, JSON.stringify(trips));
+}
+
+document.getElementById("saveTripBtn").addEventListener("click", () => {
+  if (!currentTrip) return;
+  const trips = getSavedTrips();
+  trips.unshift(currentTrip);
+  setSavedTrips(trips);
+  renderSavedTrips();
+  showToast("Trip saved ✓");
+});
+
+function renderSavedTrips() {
+  const trips = getSavedTrips();
+  const emptyEl = document.getElementById("savedEmpty");
+  const listEl = document.getElementById("savedList");
+
+  if (trips.length === 0) {
+    emptyEl.classList.remove("hidden");
+    listEl.innerHTML = "";
+    return;
+  }
+
+  emptyEl.classList.add("hidden");
+  listEl.innerHTML = trips.map(trip => `
+    <div class="saved-card">
+      <div class="saved-card__dest">${trip.destinationKey}, ${trip.country}</div>
+      <div class="saved-card__meta">
+        ${trip.days} days · ${trip.travelers} traveler${trip.travelers > 1 ? "s" : ""} ·
+        Est. ₹${trip.totals.grandTotal.toLocaleString("en-IN")}
+      </div>
+      <div class="saved-card__actions">
+        <button class="btn btn--outline" onclick="viewSavedTrip(${trip.id})">View</button>
+        <button class="btn btn--danger-outline" onclick="deleteSavedTrip(${trip.id})">Delete</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function viewSavedTrip(id) {
+  const trips = getSavedTrips();
+  const trip = trips.find(t => t.id === id);
+  if (!trip) return;
+
+  currentTrip = trip;
+  const destData = DESTINATIONS[trip.destinationKey];
+
+  document.getElementById("resultsEmpty").classList.add("hidden");
+  document.getElementById("resultsContent").classList.remove("hidden");
+  document.getElementById("resultsTitle").textContent = `${trip.destinationKey}, ${trip.country}`;
+  document.getElementById("resultsSubtitle").textContent =
+    `${trip.days}-day trip · ${trip.travelers} traveler${trip.travelers > 1 ? "s" : ""} · Budget ₹${trip.budgetCap.toLocaleString("en-IN")}`;
+
+  renderWeather(destData, trip.days);
+  renderBudget(trip.budgetFrame, trip.totals, trip.budgetCap);
+  renderItinerary(trip.itinerary);
+
+  goToView("results");
+}
+
+function deleteSavedTrip(id) {
+  const trips = getSavedTrips().filter(t => t.id !== id);
+  setSavedTrips(trips);
+  renderSavedTrips();
+  showToast("Trip removed");
+}
+
+/* ---------------- Init ---------------- */
+renderSavedTrips();
+
+  </script>
+  
+  <style>
+.sos-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 16, 40, 0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.sos-screen.show { display: flex; }
+
+.dial-card {
+  background: white;
+  width: 100%;
+  max-width: 320px;
+  padding: 25px;
+  border-radius: 22px;
+  text-align: center;
+  box-shadow: 0 10px 35px #0005;
+}
+.dial-number {
+  width: 100%;
+  padding: 14px;
+  margin: 18px 0;
+  font-size: 25px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+.dial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.dial-grid button {
+  padding: 14px;
+  border: none;
+  border-radius: 50%;
+  background: #eef2fa;
+  font-size: 20px;
+  cursor: pointer;
+}
+.call-btn {
+  width: 100%;
+  padding: 13px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 25px;
+  background: #269653;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close-btn {
+  margin-top: 12px;
+  border: none;
+  background: none;
+  color: #555;
+  cursor: pointer;
+}
+</style>
+
+<div class="sos-screen" id="sosScreen">
+  <div class="dial-card">
+    <h2>🚨 Emergency Call</h2>
+    <p>Emergency number</p>
+    <input class="dial-number" id="dialNumber"
+           value="112" readonly>
+
+    <div class="dial-grid">
+      <button onclick="dialKey('1')">1</button>
+      <button onclick="dialKey('2')">2</button>
+      <button onclick="dialKey('3')">3</button>
+      <button onclick="dialKey('4')">4</button>
+      <button onclick="dialKey('5')">5</button>
+      <button onclick="dialKey('6')">6</button>
+      <button onclick="dialKey('7')">7</button>
+      <button onclick="dialKey('8')">8</button>
+      <button onclick="dialKey('9')">9</button>
+      <button onclick="dialKey('*')">*</button>
+      <button onclick="dialKey('0')">0</button>
+      <button onclick="dialBackspace()">⌫</button>
+    </div>
+
+    <button class="call-btn" onclick="demoCall()">
+      📞 Call
+    </button>
+    <p id="callMessage" style="margin-top:12px;font-size:13px"></p>
+    <button class="close-btn" onclick="closeSOS()">Close ✕</button>
+  </div>
+</div>
+
+<script>
+document.getElementById("sosBtn").addEventListener("click", () => {
+  document.getElementById("dialNumber").value = "112";
+  document.getElementById("callMessage").textContent = "";
+  document.getElementById("sosScreen").classList.add("show");
+});
+
+function dialKey(key) {
+  const field = document.getElementById("dialNumber");
+  field.value += key;
+}
+
+function dialBackspace() {
+  const field = document.getElementById("dialNumber");
+  field.value = field.value.slice(0, -1);
+}
+
+function demoCall() {
+  const number = document.getElementById("dialNumber").value.trim();
+
+  if (number) {
+    window.location.href = "tel:" + number;
+  }
+}
+
+function closeSOS() {
+  document.getElementById("sosScreen").classList.remove("show");
+}
+</script>
+</body>
+</html>
